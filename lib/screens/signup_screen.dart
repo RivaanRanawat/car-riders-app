@@ -1,9 +1,11 @@
-import 'package:car_rider_app/screens/signup_screen.dart';
+import 'package:car_rider_app/screens/login_screen.dart';
 import 'package:car_rider_app/universal_variables.dart';
 import "package:flutter/material.dart";
 
-class LoginScreen extends StatelessWidget {
-  static const String id = "login";
+class SignUpScreen extends StatelessWidget {
+
+  static const String id = "signup";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +20,7 @@ class LoginScreen extends StatelessWidget {
                   height: 210,
                 ),
                 Text(
-                  "Login As Rider",
+                  "Create Rider's Account",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 25, fontFamily: "Nunito-Bold"),
                 ),
@@ -27,9 +29,39 @@ class LoginScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       TextField(
+                        keyboardType: TextInputType.name,
+                        decoration: InputDecoration(
+                          labelText: "Full Name",
+                          labelStyle: TextStyle(
+                            fontSize: 14,
+                          ),
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 10,
+                          ),
+                        ),
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(height: 10),
+                      TextField(
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           labelText: "Email",
+                          labelStyle: TextStyle(
+                            fontSize: 14,
+                          ),
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 10,
+                          ),
+                        ),
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(height: 10),
+                      TextField(
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          labelText: "Phone",
                           labelStyle: TextStyle(
                             fontSize: 14,
                           ),
@@ -67,7 +99,7 @@ class LoginScreen extends StatelessWidget {
                           height: 50,
                           child: Center(
                             child: Text(
-                              "LOGIN",
+                              "SIGN UP",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontFamily: "Nunito-Bold",
@@ -80,8 +112,8 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 FlatButton(
-                  onPressed: () => Navigator.pushNamedAndRemoveUntil(context, SignUpScreen.id, (route) => false),
-                    child: Text("Don't have an account? Sign Up"))
+                    onPressed: () => Navigator.pushNamedAndRemoveUntil(context, LoginScreen.id, (route) => false),
+                    child: Text("Already have an account? Login"))
               ],
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:car_rider_app/screens/home_screen.dart';
 import 'package:car_rider_app/screens/login_screen.dart';
+import 'package:car_rider_app/screens/signup_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import "dart:io";
@@ -35,7 +36,12 @@ class MyApp extends StatelessWidget {
         fontFamily: "Nunito-Regular",
         primarySwatch: Colors.blue,
       ),
-      home: LoginScreen(),
+      initialRoute: SignUpScreen.id,
+      routes: {
+        SignUpScreen.id: (context) => SignUpScreen(),
+        LoginScreen.id: (context) => LoginScreen(),
+        HomeScreen.id: (context) => HomeScreen()
+      },
     );
   }
 }
