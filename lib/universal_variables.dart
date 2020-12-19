@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class UniversalVariables{
-
+// COLORS
   static const Color colorPrimary = Color(0xFF2B1A64);
   static const Color colorPrimaryDark = Color(0xFF1c3aa9);
   static const Color colorAccent = Color(0xFF21ba45);
@@ -27,5 +27,6 @@ class UniversalVariables{
   static const Color colorDimText = Color(0xFFadadad);
 
 
-
+// API KEYS
+String mapKey = "AIzaSyA3QHg_w4Kg8atFI6Z965PN7N5buFN3zzU";
 }

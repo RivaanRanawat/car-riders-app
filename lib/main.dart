@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         fontFamily: "Nunito-Regular",
         primarySwatch: Colors.blue,
       ),
-      initialRoute: SignUpScreen.id,
+      initialRoute: HomeScreen.id,
       routes: {
         SignUpScreen.id: (context) => SignUpScreen(),
         LoginScreen.id: (context) => LoginScreen(),
