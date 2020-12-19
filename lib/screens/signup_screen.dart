@@ -1,6 +1,7 @@
 import 'package:car_rider_app/screens/home_screen.dart';
 import 'package:car_rider_app/screens/login_screen.dart';
 import 'package:car_rider_app/universal_variables.dart';
+import 'package:car_rider_app/widgets/progress_dialog.dart';
 import 'package:car_rider_app/widgets/reusable_button.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -36,14 +37,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void signUpUser() async {
+    showDialog(barrierDismissible: false ,context: context, builder: (BuildContext context) => ProgressDialog(status: "Registering you..."));
     final FirebaseUser user =
         (await _firebaseAuth.createUserWithEmailAndPassword(
                 email: emailEditingController.text,
                 password: passwordEditingController.text).catchError((err) {
+                  Navigator.of(context).pop();
                   PlatformException exception = err;
                   showSnackBar(exception.message);
                 }))
             .user;
+    Navigator.of(context).pop();
     if (user != null) {
       DatabaseReference reference = FirebaseDatabase.instance.reference().child("users/${user.uid}");
       Map userMap = {

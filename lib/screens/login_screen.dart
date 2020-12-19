@@ -1,6 +1,7 @@
 import 'package:car_rider_app/screens/home_screen.dart';
 import 'package:car_rider_app/screens/signup_screen.dart';
 import 'package:car_rider_app/universal_variables.dart';
+import 'package:car_rider_app/widgets/progress_dialog.dart';
 import 'package:car_rider_app/widgets/reusable_button.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,7 +26,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void loginUser() async {
+    showDialog(barrierDismissible: false ,context: context, builder: (BuildContext context) => ProgressDialog(status: "Loggin You In"));
     final FirebaseUser user = (await _auth.signInWithEmailAndPassword(email: emailController.text, password: passwordController.text).catchError((err) {
+      Navigator.of(context).pop();
       PlatformException exception = err;
       showSnackBar(exception.message);
     })).user;
