@@ -1,5 +1,6 @@
 import 'package:car_rider_app/screens/login_screen.dart';
 import 'package:car_rider_app/universal_variables.dart';
+import 'package:car_rider_app/widgets/reusable_button.dart';
 import "package:flutter/material.dart";
 
 class SignUpScreen extends StatelessWidget {
@@ -88,26 +89,7 @@ class SignUpScreen extends StatelessWidget {
                         obscureText: true,
                       ),
                       SizedBox(height: 40),
-                      RaisedButton(
-                        onPressed: () {},
-                        shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(25),
-                        ),
-                        color: UniversalVariables.colorGreen,
-                        textColor: Colors.white,
-                        child: Container(
-                          height: 50,
-                          child: Center(
-                            child: Text(
-                              "SIGN UP",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: "Nunito-Bold",
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                      ReusableButton(color: UniversalVariables.colorGreen, text: "SIGN UP",onPressed: () {},),
                     ],
                   ),
                 ),
