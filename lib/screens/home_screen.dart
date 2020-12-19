@@ -3,6 +3,7 @@ import 'package:car_rider_app/styles.dart';
 import 'package:car_rider_app/universal_variables.dart';
 import 'package:car_rider_app/widgets/reusable_divider.dart';
 import "package:flutter/material.dart";
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 
@@ -18,6 +19,19 @@ class _HomeScreenState extends State<HomeScreen> {
   Completer<GoogleMapController> _controller = Completer();
   GoogleMapController mapController;
   double mapPadding = 0.0;
+  var geoLocator = Geolocator();
+  Position currentPos;
+
+  void setPositionLocator() async {
+    Position position = await geoLocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.bestForNavigation);
+    currentPos = position;
+
+    LatLng pos = LatLng(position.latitude, position.longitude);
+    CameraPosition cp = new CameraPosition(target: pos, zoom: 14);
+    mapController.animateCamera(CameraUpdate.newCameraPosition(cp));
+  }
+
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 14.4746,
@@ -110,6 +124,9 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.only(bottom: mapPadding),
             initialCameraPosition: _kGooglePlex,
             mapType: MapType.normal,
+            myLocationEnabled: true,
+            zoomControlsEnabled: true,
+            zoomGesturesEnabled: true,
             myLocationButtonEnabled: true,
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
@@ -118,6 +135,8 @@ class _HomeScreenState extends State<HomeScreen> {
               setState(() {
                 mapPadding = 270;
               });
+
+              setPositionLocator();
             },
           ),
           // Drawer Button
@@ -125,10 +144,10 @@ class _HomeScreenState extends State<HomeScreen> {
             top: 44,
             left: 22,
             child: GestureDetector(
-              onTap: (){
+              onTap: () {
                 scaffoldKey.currentState.openDrawer();
               },
-                          child: Container(
+              child: Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
