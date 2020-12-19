@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "4489037899",
+    "firebase_url": "https://car-rider-app-default-rtdb.firebaseio.com",
+    "project_id": "car-rider-app",
+    "storage_bucket": "car-rider-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:4489037899:android:78c852e8560367be92e5ce",
+        "android_client_info": {
+          "package_name": "com.example.car_rider_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "4489037899-8f9q9r8sre71ll1sv5lb07r0ot8s7j2c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3QHg_w4Kg8atFI6Z965PN7N5buFN3zzU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "4489037899-8f9q9r8sre71ll1sv5lb07r0ot8s7j2c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
