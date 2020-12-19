@@ -33,6 +33,7 @@ dependencies:
   firebase_database: ^3.1.5
   connectivity: ^0.4.8+6
   google_maps_flutter: ^0.5.28
+  outline_material_icons: ^0.1.1
   google_fonts:
 
 dev_dependencies:
