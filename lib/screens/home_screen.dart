@@ -255,7 +255,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.7,
-                                child: Text(
+                                child: Text("Home",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontFamily: "Bolt-Regular"),
+                                ),
+                              ),
+                              SizedBox(height: 3),
+                              Text(
                                   (Provider.of<AppData>(context)
                                               .pickUpAddress !=
                                           null)
@@ -264,11 +270,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           .placeName
                                       : "Add Home",
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(fontFamily: "Bolt-Regular"),
-                                ),
-                              ),
-                              SizedBox(height: 3),
-                              Text("Your Address",
                                   style: TextStyle(
                                       fontFamily: "Bolt-Regular",
                                       fontSize: 11,
@@ -291,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Add Work",
+                              "Work",
                               style: TextStyle(fontFamily: "Bolt-Regular"),
                             ),
                             SizedBox(height: 3),
