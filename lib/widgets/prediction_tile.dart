@@ -34,11 +34,12 @@ class PredictionTile extends StatelessWidget {
       placeResult.placeName = res["result"]["name"];
       placeResult.placeId = placeId;
       placeResult.lat = res["result"]["geometry"]["location"]["lat"];
-      placeResult.lat = res["result"]["geometry"]["location"]["lng"];
+      placeResult.lng = res["result"]["geometry"]["location"]["lng"];
 
       Provider.of<AppData>(context, listen: false)
           .updateDestinationAddress(placeResult);
       print(placeResult.placeName);
+      Navigator.of(context).pop("getDirection");
     }
   }
 

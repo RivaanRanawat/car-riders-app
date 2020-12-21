@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:car_rider_app/dataprovider/appData.dart';
 import 'package:car_rider_app/helpers/helperRepository.dart';
+import 'package:car_rider_app/models/directionDetails.dart';
 import 'package:car_rider_app/screens/search_screen.dart';
 import 'package:car_rider_app/styles.dart';
 import 'package:car_rider_app/universal_variables.dart';
+import 'package:car_rider_app/widgets/progress_dialog.dart';
 import 'package:car_rider_app/widgets/reusable_divider.dart';
 import "package:flutter/material.dart";
 import 'package:geolocator/geolocator.dart';
@@ -212,9 +214,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: 20),
                     GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
+                      onTap: () async {
+                        var res = await Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => SearchScreen()));
+                        if(res == "getDirection") {
+                          await getDirection();
+                        }
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -255,7 +260,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.7,
-                                child: Text("Home",
+                                child: Text(
+                                  "Home",
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(fontFamily: "Bolt-Regular"),
                                 ),
@@ -313,5 +319,28 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> getDirection() async {
+    var pickup = Provider.of<AppData>(context, listen: false).pickUpAddress;
+    var destination =
+        Provider.of<AppData>(context, listen: false).destinationAddress;
+
+    print(destination.lng);
+    print(pickup.lng);
+    var pickLatLng = LatLng(pickup.lat, pickup.lng);
+    var destinationLatLng = LatLng(destination.lat, destination.lng);
+
+    
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) =>
+            ProgressDialog(status: "Please wait.."));
+
+    var details = await HelperRepository.getDirectionDetails(
+        pickLatLng, destinationLatLng);
+    Navigator.of(context).pop();
+    print(details.encodedPoints);
   }
 }
