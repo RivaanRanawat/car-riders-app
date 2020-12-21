@@ -8,5 +8,4 @@ class AppData extends ChangeNotifier {
     pickUpAddress = pickup;
     notifyListeners();
   }
-  
 }

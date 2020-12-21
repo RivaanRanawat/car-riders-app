@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:car_rider_app/dataprovider/appData.dart';
 import 'package:car_rider_app/helpers/helperRepository.dart';
+import 'package:car_rider_app/screens/search_screen.dart';
 import 'package:car_rider_app/styles.dart';
 import 'package:car_rider_app/universal_variables.dart';
 import 'package:car_rider_app/widgets/reusable_divider.dart';
@@ -31,12 +32,12 @@ class _HomeScreenState extends State<HomeScreen> {
     currentPos = position;
 
     LatLng pos = LatLng(position.latitude, position.longitude);
-    CameraPosition cp = new CameraPosition(target: pos, zoom: 14);
-    mapController.animateCamera(CameraUpdate.newCameraPosition(cp));
-    print(position);
     String address =
         await HelperRepository.findCordinatesAddress(position, context);
     print("Address " + address);
+    CameraPosition cp = new CameraPosition(target: pos, zoom: 14);
+    mapController.animateCamera(CameraUpdate.newCameraPosition(cp));
+    print(position);
   }
 
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -210,27 +211,33 @@ class _HomeScreenState extends State<HomeScreen> {
                           TextStyle(fontSize: 18, fontFamily: "Bolt-Semibold"),
                     ),
                     SizedBox(height: 20),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 0.5,
-                              spreadRadius: 0.5,
-                              offset: Offset(0.7, 0.7),
-                            )
-                          ]),
-                      // SEARCH PANEL
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.search, color: Colors.blueAccent),
-                            SizedBox(width: 10),
-                            Text("Search Destination"),
-                          ],
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => SearchScreen()));
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 0.5,
+                                spreadRadius: 0.5,
+                                offset: Offset(0.7, 0.7),
+                              )
+                            ]),
+                        // SEARCH PANEL
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Row(
+                            children: [
+                              Icon(Icons.search, color: Colors.blueAccent),
+                              SizedBox(width: 10),
+                              Text("Search Destination"),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -246,11 +253,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              width: MediaQuery.of(context).size.width*0.7,
+                              width: MediaQuery.of(context).size.width * 0.7,
                               child: Text(
                                 (Provider.of<AppData>(context)
-                                            .pickUpAddress
-                                            .placeName !=
+                                            .pickUpAddress !=
                                         null)
                                     ? Provider.of<AppData>(context)
                                         .pickUpAddress
