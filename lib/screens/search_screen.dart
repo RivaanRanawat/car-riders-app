@@ -57,6 +57,7 @@ class _SearchScreenState extends State<SearchScreen> {
     pickupController.text = address;
 
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       body: Column(
         children: [
           Container(
