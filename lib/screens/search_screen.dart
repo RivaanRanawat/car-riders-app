@@ -1,5 +1,7 @@
+import 'package:car_rider_app/dataprovider/appData.dart';
 import 'package:car_rider_app/universal_variables.dart';
 import "package:flutter/material.dart";
+import 'package:provider/provider.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -7,8 +9,25 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  var pickupController = TextEditingController();
+  var destinationController = TextEditingController();
+
+  var focusDestination = FocusNode();
+    bool isFocused = false;
+
+    void setFocus() {
+      if(!isFocused) {
+        FocusScope.of(context).requestFocus(focusDestination);
+        isFocused = true;
+      }
+    }
+
   @override
   Widget build(BuildContext context) {
+    setFocus();
+    String address = Provider.of<AppData>(context).pickUpAddress.placeName ?? "";
+    pickupController.text = address;
+
     return Scaffold(
       body: Column(
         children: [
@@ -64,6 +83,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: TextField(
+                              controller: pickupController,
                               decoration: InputDecoration(
                                   hintText: "Pickup Location",
                                   fillColor:
@@ -95,6 +115,8 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: TextField(
+                              focusNode: focusDestination,
+                              controller: destinationController,
                               decoration: InputDecoration(
                                   hintText: "Destination",
                                   fillColor:

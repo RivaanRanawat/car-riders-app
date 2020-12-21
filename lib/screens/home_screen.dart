@@ -260,7 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         null)
                                     ? Provider.of<AppData>(context)
                                         .pickUpAddress
-                                        .placeName
+                                        .placeName.substring(0, 75)
                                     : "Add Home",
                                 style: TextStyle(fontFamily: "Bolt-Regular"),
                               ),
@@ -278,7 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(height: 10),
                     ReusableDivider(),
                     SizedBox(height: 16),
-                    // WORK ADDRESS
+                    //WORK ADDRESS
                     Row(
                       children: [
                         Icon(OMIcons.workOutline,
