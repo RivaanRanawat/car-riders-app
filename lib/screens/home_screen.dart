@@ -30,6 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Position currentPos;
   List<LatLng> polyLineCordinates = [];
   Set<Polyline> _polylines = {};
+  Set<Marker> _markers = {};
+  Set<Circle> _circles = {};
 
   void setPositionLocator() async {
     Position position = await geoLocator.getCurrentPosition(
@@ -140,6 +142,8 @@ class _HomeScreenState extends State<HomeScreen> {
             myLocationEnabled: true,
             zoomControlsEnabled: true,
             zoomGesturesEnabled: true,
+            markers: _markers,
+            circles: _circles,
             polylines: _polylines,
             myLocationButtonEnabled: true,
             onMapCreated: (GoogleMapController controller) {
@@ -368,21 +372,71 @@ class _HomeScreenState extends State<HomeScreen> {
         geodesic: true,
       );
 
-    _polylines.add(polyline);
+      _polylines.add(polyline);
     });
 
     LatLngBounds bounds;
     // fitting the polyline in map
-    if(pickLatLng.latitude > destinationLatLng.latitude && pickLatLng.longitude > destinationLatLng.longitude) {
-      bounds = LatLngBounds(southwest: destinationLatLng, northeast: pickLatLng);
-    } else if(pickLatLng.longitude > destinationLatLng.longitude) {
-      bounds = LatLngBounds(southwest: LatLng(pickLatLng.latitude, destinationLatLng.longitude), northeast: LatLng(destinationLatLng.latitude, pickLatLng.longitude)); 
-    } else if(pickLatLng.latitude > destinationLatLng.latitude) {
-      bounds = LatLngBounds(southwest: LatLng(destinationLatLng.latitude, pickLatLng.longitude), northeast: LatLng(pickLatLng.latitude, destinationLatLng.longitude));
+    if (pickLatLng.latitude > destinationLatLng.latitude &&
+        pickLatLng.longitude > destinationLatLng.longitude) {
+      bounds =
+          LatLngBounds(southwest: destinationLatLng, northeast: pickLatLng);
+    } else if (pickLatLng.longitude > destinationLatLng.longitude) {
+      bounds = LatLngBounds(
+          southwest: LatLng(pickLatLng.latitude, destinationLatLng.longitude),
+          northeast: LatLng(destinationLatLng.latitude, pickLatLng.longitude));
+    } else if (pickLatLng.latitude > destinationLatLng.latitude) {
+      bounds = LatLngBounds(
+          southwest: LatLng(destinationLatLng.latitude, pickLatLng.longitude),
+          northeast: LatLng(pickLatLng.latitude, destinationLatLng.longitude));
     } else {
-      bounds = LatLngBounds(southwest: pickLatLng, northeast: destinationLatLng);
+      bounds =
+          LatLngBounds(southwest: pickLatLng, northeast: destinationLatLng);
     }
 
     mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 70));
+
+    Marker pickupMarker = Marker(
+        markerId: MarkerId("pickup"),
+        position: pickLatLng,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+        infoWindow:
+            InfoWindow(title: pickup.placeName, snippet: "Your Location"));
+
+    Marker destinationMarker = Marker(
+        markerId: MarkerId("destination"),
+        position: destinationLatLng,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        infoWindow: InfoWindow(
+            title: destination.placeName, snippet: "Your Destination"));
+
+    setState(() {
+      _markers.add(pickupMarker);
+      _markers.add(destinationMarker);
+    });
+
+    Circle pickUpCircle = Circle(
+      circleId: CircleId("pickup"),
+      strokeColor: Colors.green,
+      strokeWidth: 3,
+      radius: 12,
+      center: pickLatLng,
+      fillColor: UniversalVariables.colorGreen,
+
+    );
+
+    Circle destinationCircle = Circle(
+      circleId: CircleId("destination"),
+      strokeColor: UniversalVariables.colorAccentPurple,
+      strokeWidth: 3,
+      radius: 12,
+      center: destinationLatLng,
+      fillColor: UniversalVariables.colorAccentPurple,
+    );
+
+    setState(() {
+      _circles.add(pickUpCircle);
+      _circles.add(destinationCircle);
+    });
   }
 }
