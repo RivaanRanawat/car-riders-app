@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:car_rider_app/dataprovider/appData.dart';
 import 'package:car_rider_app/helpers/helperRepository.dart';
 import 'package:car_rider_app/styles.dart';
 import 'package:car_rider_app/universal_variables.dart';
@@ -7,6 +8,7 @@ import "package:flutter/material.dart";
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String id = "home";
@@ -16,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
-  double searchSheetHeight = 275;
+  double searchSheetHeight = 300;
   Completer<GoogleMapController> _controller = Completer();
   GoogleMapController mapController;
   double mapPadding = 0.0;
@@ -32,7 +34,8 @@ class _HomeScreenState extends State<HomeScreen> {
     CameraPosition cp = new CameraPosition(target: pos, zoom: 14);
     mapController.animateCamera(CameraUpdate.newCameraPosition(cp));
     print(position);
-    String address = await HelperRepository.findCordinatesAddress(position);
+    String address =
+        await HelperRepository.findCordinatesAddress(position, context);
     print("Address " + address);
   }
 
@@ -175,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
             right: 0,
             bottom: 0,
             child: Container(
-              height: searchSheetHeight,
+              height: MediaQuery.of(context).size.height * 0.38,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -242,9 +245,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "Add Home",
-                              style: TextStyle(fontFamily: "Bolt-Regular"),
+                            Container(
+                              width: MediaQuery.of(context).size.width*0.7,
+                              child: Text(
+                                (Provider.of<AppData>(context)
+                                            .pickUpAddress
+                                            .placeName !=
+                                        null)
+                                    ? Provider.of<AppData>(context)
+                                        .pickUpAddress
+                                        .placeName
+                                    : "Add Home",
+                                style: TextStyle(fontFamily: "Bolt-Regular"),
+                              ),
                             ),
                             SizedBox(height: 3),
                             Text("Your Address",

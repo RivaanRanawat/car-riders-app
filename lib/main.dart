@@ -1,9 +1,12 @@
+import 'package:car_rider_app/dataprovider/appData.dart';
 import 'package:car_rider_app/screens/home_screen.dart';
 import 'package:car_rider_app/screens/login_screen.dart';
 import 'package:car_rider_app/screens/signup_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import "dart:io";
+
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,17 +32,20 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        fontFamily: "Nunito-Regular",
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider(
+      create: (context) => AppData(),
+      child: MaterialApp(
+        theme: ThemeData(
+          fontFamily: "Nunito-Regular",
+          primarySwatch: Colors.blue,
+        ),
+        initialRoute: HomeScreen.id,
+        routes: {
+          SignUpScreen.id: (context) => SignUpScreen(),
+          LoginScreen.id: (context) => LoginScreen(),
+          HomeScreen.id: (context) => HomeScreen()
+        },
       ),
-      initialRoute: HomeScreen.id,
-      routes: {
-        SignUpScreen.id: (context) => SignUpScreen(),
-        LoginScreen.id: (context) => LoginScreen(),
-        HomeScreen.id: (context) => HomeScreen()
-      },
     );
   }
 }

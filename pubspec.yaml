@@ -36,6 +36,7 @@ dependencies:
   outline_material_icons: ^0.1.1
   geolocator: ^5.3.1
   http: ^0.12.1
+  provider: ^4.1.2
   google_fonts:
 
 dev_dependencies:
