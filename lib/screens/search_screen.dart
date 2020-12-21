@@ -1,7 +1,11 @@
 import 'package:car_rider_app/dataprovider/appData.dart';
 import 'package:car_rider_app/helpers/requestHelpers.dart';
+import 'package:car_rider_app/models/prediction.dart';
 import 'package:car_rider_app/universal_variables.dart';
+import 'package:car_rider_app/widgets/prediction_tile.dart';
+import 'package:car_rider_app/widgets/reusable_divider.dart';
 import "package:flutter/material.dart";
+import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:provider/provider.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -12,6 +16,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   var pickupController = TextEditingController();
   var destinationController = TextEditingController();
+  List<Prediction> destinationPredictionResult = [];
 
   var focusDestination = FocusNode();
   bool isFocused = false;
@@ -26,13 +31,21 @@ class _SearchScreenState extends State<SearchScreen> {
   void searchPlace(String placeName) async {
     if (placeName.length > 1) {
       String url =
-          "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=1600+Amphitheatre&key=${UniversalVariables.mapKey}&sessiontoken=1234567890";
+          "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placeName&key=${UniversalVariables.mapKey}&sessiontoken=1234567890";
       var res = await RequestHelpers.getRequest(url);
 
       if (res == "failed") {
         return;
       }
-      print(res);
+      if (res["status"] == "OK") {
+        var predictionJson = res["predictions"];
+        var predictionList = (predictionJson as List)
+            .map((e) => Prediction.fromJson(e))
+            .toList();
+        setState(() {
+          destinationPredictionResult = predictionList;
+        });
+      }
     }
   }
 
@@ -136,14 +149,15 @@ class _SearchScreenState extends State<SearchScreen> {
                               focusNode: focusDestination,
                               controller: destinationController,
                               decoration: InputDecoration(
-                                  hintText: "Destination",
-                                  fillColor:
-                                      UniversalVariables.colorLightGrayFair,
-                                  filled: true,
-                                  border: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.only(
-                                      left: 10, top: 8, bottom: 8)),
+                                hintText: "Destination",
+                                fillColor:
+                                    UniversalVariables.colorLightGrayFair,
+                                filled: true,
+                                border: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.only(
+                                    left: 10, top: 8, bottom: 8),
+                              ),
                             ),
                           ),
                         ),
@@ -154,6 +168,25 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
           ),
+          // TO SHOW LIST OF PREDICTED LOCATIONS
+          (destinationPredictionResult.length > 0)
+              ? Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  child: ListView.separated(
+                    itemBuilder: (context, index) {
+                      return PredictionTile(
+                        prediction: destinationPredictionResult[index],
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) =>
+                        ReusableDivider(),
+                    itemCount: destinationPredictionResult.length,
+                    shrinkWrap: true,
+                    physics: ClampingScrollPhysics(),
+                  ),
+                )
+              : Container()
         ],
       ),
     );

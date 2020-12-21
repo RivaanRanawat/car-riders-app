@@ -249,30 +249,33 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icon(OMIcons.home,
                             color: UniversalVariables.colorDimText),
                         SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.7,
-                              child: Text(
-                                (Provider.of<AppData>(context)
-                                            .pickUpAddress !=
-                                        null)
-                                    ? Provider.of<AppData>(context)
-                                        .pickUpAddress
-                                        .placeName.substring(0, 75)
-                                    : "Add Home",
-                                style: TextStyle(fontFamily: "Bolt-Regular"),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.7,
+                                child: Text(
+                                  (Provider.of<AppData>(context)
+                                              .pickUpAddress !=
+                                          null)
+                                      ? Provider.of<AppData>(context)
+                                          .pickUpAddress
+                                          .placeName
+                                      : "Add Home",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontFamily: "Bolt-Regular"),
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 3),
-                            Text("Your Address",
-                                style: TextStyle(
-                                    fontFamily: "Bolt-Regular",
-                                    fontSize: 11,
-                                    color: UniversalVariables.colorDimText))
-                          ],
-                        )
+                              SizedBox(height: 3),
+                              Text("Your Address",
+                                  style: TextStyle(
+                                      fontFamily: "Bolt-Regular",
+                                      fontSize: 11,
+                                      color: UniversalVariables.colorDimText))
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(height: 10),
