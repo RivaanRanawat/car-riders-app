@@ -8,6 +8,7 @@ import 'package:car_rider_app/universal_variables.dart';
 import 'package:car_rider_app/widgets/progress_dialog.dart';
 import 'package:car_rider_app/widgets/reusable_divider.dart';
 import "package:flutter/material.dart";
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -27,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   double mapPadding = 0.0;
   var geoLocator = Geolocator();
   Position currentPos;
+  List<LatLng> polyLineCordinates = [];
+  Set<Polyline> _polylines = {};
 
   void setPositionLocator() async {
     Position position = await geoLocator.getCurrentPosition(
@@ -137,6 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
             myLocationEnabled: true,
             zoomControlsEnabled: true,
             zoomGesturesEnabled: true,
+            polylines: _polylines,
             myLocationButtonEnabled: true,
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
@@ -215,9 +219,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(height: 20),
                     GestureDetector(
                       onTap: () async {
-                        var res = await Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => SearchScreen()));
-                        if(res == "getDirection") {
+                        var res = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (ctx) => SearchScreen()));
+                        if (res == "getDirection") {
                           await getDirection();
                         }
                       },
@@ -331,7 +336,6 @@ class _HomeScreenState extends State<HomeScreen> {
     var pickLatLng = LatLng(pickup.lat, pickup.lng);
     var destinationLatLng = LatLng(destination.lat, destination.lng);
 
-    
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -341,6 +345,44 @@ class _HomeScreenState extends State<HomeScreen> {
     var details = await HelperRepository.getDirectionDetails(
         pickLatLng, destinationLatLng);
     Navigator.of(context).pop();
-    print(details.encodedPoints);
+    PolylinePoints polylinePoints = PolylinePoints();
+    List<PointLatLng> results =
+        polylinePoints.decodePolyline(details.encodedPoints);
+
+    polyLineCordinates.clear();
+    if (results.isNotEmpty) {
+      results.forEach((element) {
+        polyLineCordinates.add(LatLng(element.latitude, element.longitude));
+      });
+    }
+
+    _polylines.clear();
+
+    setState(() {
+      Polyline polyline = Polyline(
+        polylineId: PolylineId("polyid"),
+        color: Color.fromARGB(255, 95, 109, 237),
+        points: polyLineCordinates,
+        width: 4,
+        startCap: Cap.roundCap,
+        geodesic: true,
+      );
+
+    _polylines.add(polyline);
+    });
+
+    LatLngBounds bounds;
+    // fitting the polyline in map
+    if(pickLatLng.latitude > destinationLatLng.latitude && pickLatLng.longitude > destinationLatLng.longitude) {
+      bounds = LatLngBounds(southwest: destinationLatLng, northeast: pickLatLng);
+    } else if(pickLatLng.longitude > destinationLatLng.longitude) {
+      bounds = LatLngBounds(southwest: LatLng(pickLatLng.latitude, destinationLatLng.longitude), northeast: LatLng(destinationLatLng.latitude, pickLatLng.longitude)); 
+    } else if(pickLatLng.latitude > destinationLatLng.latitude) {
+      bounds = LatLngBounds(southwest: LatLng(destinationLatLng.latitude, pickLatLng.longitude), northeast: LatLng(pickLatLng.latitude, destinationLatLng.longitude));
+    } else {
+      bounds = LatLngBounds(southwest: pickLatLng, northeast: destinationLatLng);
+    }
+
+    mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 70));
   }
 }
