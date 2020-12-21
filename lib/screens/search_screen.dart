@@ -1,4 +1,5 @@
 import 'package:car_rider_app/dataprovider/appData.dart';
+import 'package:car_rider_app/helpers/requestHelpers.dart';
 import 'package:car_rider_app/universal_variables.dart';
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
@@ -13,19 +14,33 @@ class _SearchScreenState extends State<SearchScreen> {
   var destinationController = TextEditingController();
 
   var focusDestination = FocusNode();
-    bool isFocused = false;
+  bool isFocused = false;
 
-    void setFocus() {
-      if(!isFocused) {
-        FocusScope.of(context).requestFocus(focusDestination);
-        isFocused = true;
-      }
+  void setFocus() {
+    if (!isFocused) {
+      FocusScope.of(context).requestFocus(focusDestination);
+      isFocused = true;
     }
+  }
+
+  void searchPlace(String placeName) async {
+    if (placeName.length > 1) {
+      String url =
+          "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=1600+Amphitheatre&key=${UniversalVariables.mapKey}&sessiontoken=1234567890";
+      var res = await RequestHelpers.getRequest(url);
+
+      if (res == "failed") {
+        return;
+      }
+      print(res);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     setFocus();
-    String address = Provider.of<AppData>(context).pickUpAddress.placeName ?? "";
+    String address =
+        Provider.of<AppData>(context).pickUpAddress.placeName ?? "";
     pickupController.text = address;
 
     return Scaffold(
@@ -115,6 +130,9 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: TextField(
+                              onChanged: (val) {
+                                searchPlace(val);
+                              },
                               focusNode: focusDestination,
                               controller: destinationController,
                               decoration: InputDecoration(
