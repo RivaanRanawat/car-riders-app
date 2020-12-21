@@ -28,5 +28,5 @@ class UniversalVariables{
 
 
 // API KEYS
-String mapKey = "AIzaSyDlN5S_ny58G9dUgtHIcJPt2HdFopOoDyQ";
+static const String mapKey = "AIzaSyDlN5S_ny58G9dUgtHIcJPt2HdFopOoDyQ";
 }

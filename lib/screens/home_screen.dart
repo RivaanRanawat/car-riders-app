@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:car_rider_app/helpers/helperRepository.dart';
 import 'package:car_rider_app/styles.dart';
 import 'package:car_rider_app/universal_variables.dart';
 import 'package:car_rider_app/widgets/reusable_divider.dart';
@@ -30,6 +31,9 @@ class _HomeScreenState extends State<HomeScreen> {
     LatLng pos = LatLng(position.latitude, position.longitude);
     CameraPosition cp = new CameraPosition(target: pos, zoom: 14);
     mapController.animateCamera(CameraUpdate.newCameraPosition(cp));
+    print(position);
+    String address = await HelperRepository.findCordinatesAddress(position);
+    print("Address " + address);
   }
 
   static final CameraPosition _kGooglePlex = CameraPosition(
