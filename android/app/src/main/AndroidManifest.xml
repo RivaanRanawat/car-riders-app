@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.car_rider_app">
+    package="com.rivaanrranawatapps.car_rider_app">
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
          In most cases you can leave this as-is, but you if you want to provide
@@ -48,6 +48,6 @@
             android:value="2" />
 
         <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyA3QHg_w4Kg8atFI6Z965PN7N5buFN3zzU"/>
+               android:value="AIzaSyDlN5S_ny58G9dUgtHIcJPt2HdFopOoDyQ"/>
     </application>
 </manifest>

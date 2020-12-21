@@ -5,8 +5,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import "dart:io";
 
-import 'package:google_fonts/google_fonts.dart';
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // initialise database
@@ -19,9 +17,9 @@ Future<void> main() async {
             databaseURL: 'https://flutterfire-cd2f7.firebaseio.com',
           )
         : FirebaseOptions(
-            googleAppID: '1:4489037899:android:78c852e8560367be92e5ce',
-            apiKey: 'AIzaSyA3QHg_w4Kg8atFI6Z965PN7N5buFN3zzU',
-            databaseURL: 'https://car-rider-app-default-rtdb.firebaseio.com',
+            googleAppID: '1:74445978662:android:58946ceeb822317b163ae7',
+            apiKey: 'AIzaSyDlN5S_ny58G9dUgtHIcJPt2HdFopOoDyQ',
+            databaseURL: 'https://cab-rider-app-default-rtdb.firebaseio.com',
           ),
   );
 
