@@ -6,9 +6,11 @@ import 'package:car_rider_app/screens/search_screen.dart';
 import 'package:car_rider_app/styles.dart';
 import 'package:car_rider_app/universal_variables.dart';
 import 'package:car_rider_app/widgets/progress_dialog.dart';
+import 'package:car_rider_app/widgets/reusable_button.dart';
 import 'package:car_rider_app/widgets/reusable_divider.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -189,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
             right: 0,
             bottom: 0,
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.38,
+              height: 270,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -325,6 +327,82 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 15,
+                    spreadRadius: 0.5,
+                    offset: Offset(0.7, 0.7),
+                  ),
+                ],
+              ),
+              height: 270,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 18.0),
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      color: UniversalVariables.colorAccent1,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Row(
+                          children: [
+                            Image.asset("assets/images/taxi.png", height: 70, width: 70),
+                            SizedBox(width: 16),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Taxi", style: TextStyle(fontSize: 18, fontFamily: "Bolt-Semibold"),),
+                                Text("14 km", style: TextStyle(fontSize: 16, fontFamily: "Bolt-Regular",color: UniversalVariables.colorTextLight),)
+                              ],
+                            ),
+                            Expanded(child: Container(),),
+                            Text("₹250", style: TextStyle(fontSize: 18, fontFamily: "Bolt-Semibold"),),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 22),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        children: [
+                          Icon(FontAwesomeIcons.moneyBillAlt, size: 18, color: UniversalVariables.colorTextLight,),
+                          SizedBox(width: 16),
+                          Text("Cash"),
+                          SizedBox(width: 5),
+                          Icon(Icons.keyboard_arrow_down, color: UniversalVariables.colorTextLight, size: 16),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 22),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: ReusableButton(
+                        text: "REQUEST CAB",
+                        color: UniversalVariables.colorGreen,
+                        onPressed: () {
+                          
+                        }, 
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -404,11 +482,12 @@ class _HomeScreenState extends State<HomeScreen> {
             InfoWindow(title: pickup.placeName, snippet: "Your Location"));
 
     Marker destinationMarker = Marker(
-        markerId: MarkerId("destination"),
-        position: destinationLatLng,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-        infoWindow: InfoWindow(
-            title: destination.placeName, snippet: "Your Destination"));
+      markerId: MarkerId("destination"),
+      position: destinationLatLng,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      infoWindow:
+          InfoWindow(title: destination.placeName, snippet: "Your Destination"),
+    );
 
     setState(() {
       _markers.add(pickupMarker);
@@ -422,7 +501,6 @@ class _HomeScreenState extends State<HomeScreen> {
       radius: 12,
       center: pickLatLng,
       fillColor: UniversalVariables.colorGreen,
-
     );
 
     Circle destinationCircle = Circle(
