@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => AppData(),
       child: MaterialApp(
+        title: "Rider App",
         theme: ThemeData(
           fontFamily: "Nunito-Regular",
           primarySwatch: Colors.blue,
