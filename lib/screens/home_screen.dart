@@ -37,6 +37,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Set<Circle> _circles = {};
   DirectionDetails tripDirectionDetails;
 
+  bool drawerCanOpen = true;
+
   void setPositionLocator() async {
     Position position = await geoLocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.bestForNavigation);
@@ -51,17 +53,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     print(position);
   }
 
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
-
   void showRideDetailScreen() async {
     await getDirection();
     setState(() {
       searchSheetHeight = 0;
       rideSheetHeight = 270;
       mapPadding = 240;
+      drawerCanOpen = false;
     });
   }
 
@@ -151,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         children: [
           GoogleMap(
             padding: EdgeInsets.only(bottom: mapPadding),
-            initialCameraPosition: _kGooglePlex,
+            initialCameraPosition: UniversalVariables.googlePlex,
             mapType: MapType.normal,
             myLocationEnabled: true,
             zoomControlsEnabled: true,
@@ -177,7 +175,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             left: 22,
             child: GestureDetector(
               onTap: () {
-                scaffoldKey.currentState.openDrawer();
+                if (drawerCanOpen) {
+                  scaffoldKey.currentState.openDrawer();
+                } else {
+                  resetApp();
+                }
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -193,7 +195,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 child: CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: 20,
-                  child: Icon(Icons.menu, color: Colors.black),
+                  child: Icon((drawerCanOpen) ? Icons.menu : Icons.arrow_back,
+                      color: Colors.black),
                 ),
               ),
             ),
@@ -570,6 +573,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     setState(() {
       _circles.add(pickUpCircle);
       _circles.add(destinationCircle);
+    });
+  }
+
+  resetApp() {
+    setState(() {
+      polyLineCordinates.clear();
+      _polylines.clear();
+      _markers.clear();
+      _circles.clear();
+      rideSheetHeight = 0;
+      searchSheetHeight = 270;
+      mapPadding = 280;
+      drawerCanOpen = true;
+      setPositionLocator();
     });
   }
 }
