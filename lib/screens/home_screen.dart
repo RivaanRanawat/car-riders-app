@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:car_rider_app/dataprovider/appData.dart';
 import 'package:car_rider_app/helpers/helperRepository.dart';
 import 'package:car_rider_app/models/directionDetails.dart';
@@ -26,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
   double searchSheetHeight = 270;
   double rideSheetHeight = 0;
+  double requestSheetHeight = 0;
   Completer<GoogleMapController> _controller = Completer();
   GoogleMapController mapController;
   double mapPadding = 0.0;
@@ -60,6 +62,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       rideSheetHeight = 270;
       mapPadding = 240;
       drawerCanOpen = false;
+    });
+  }
+
+  void showRequestSheet() {
+    setState(() {
+      rideSheetHeight = 0;
+      requestSheetHeight = 195;
+      mapPadding = 200;
+      drawerCanOpen = true;
     });
   }
 
@@ -201,6 +212,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
             ),
           ),
+
+          // SEARCH PANEL
           Positioned(
             left: 0,
             right: 0,
@@ -263,7 +276,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   offset: Offset(0.7, 0.7),
                                 )
                               ]),
-                          // SEARCH PANEL
                           child: Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: Row(
@@ -448,7 +460,91 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         child: ReusableButton(
                           text: "REQUEST CAB",
                           color: UniversalVariables.colorGreen,
-                          onPressed: () {},
+                          onPressed: () {
+                            showRequestSheet();
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: AnimatedSize(
+              vsync: this,
+              duration: new Duration(milliseconds: 150),
+              curve: Curves.easeIn,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 15,
+                      spreadRadius: 0.5,
+                      offset: Offset(0.7, 0.7),
+                    ),
+                  ],
+                ),
+                height: requestSheetHeight,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0, vertical: 18),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: TextLiquidFill(
+                          text: 'Requesting a Ride..',
+                          waveColor: UniversalVariables.colorTextSemiLight,
+                          boxBackgroundColor: Colors.white,
+                          textStyle: TextStyle(
+                            fontSize: 22.0,
+                            fontFamily: "Bolt-Semibold",
+                          ),
+                          boxHeight: 40.0,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(25),
+                          border: Border.all(
+                              width: 1.0,
+                              color: UniversalVariables.colorLightGrayFair),
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          size: 25,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        width: double.infinity,
+                        child: Text(
+                          "Cancel ride",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12),
                         ),
                       ),
                     ],
