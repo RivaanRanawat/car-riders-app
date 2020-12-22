@@ -37,5 +37,5 @@ class UniversalVariables {
   );
 }
 
-FirebaseUser currentFirebaseUser;
 User currentUserInfo;
+FirebaseUser currentFirebaseUser;

@@ -11,6 +11,7 @@ import 'package:car_rider_app/widgets/reusable_button.dart';
 import 'package:car_rider_app/widgets/reusable_divider.dart';
 import 'package:firebase_database/firebase_database.dart';
 import "package:flutter/material.dart";
+import "package:flutter_geofire/flutter_geofire.dart";
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -49,12 +50,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     currentPos = position;
 
     LatLng pos = LatLng(position.latitude, position.longitude);
+    
     String address =
         await HelperRepository.findCordinatesAddress(position, context);
-    print("Address " + address);
+
     CameraPosition cp = new CameraPosition(target: pos, zoom: 14);
     mapController.animateCamera(CameraUpdate.newCameraPosition(cp));
-    print(position);
+
+    startGeoFireListener();
   }
 
   void showRideDetailScreen() async {
@@ -719,6 +722,38 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     setState(() {
       _circles.add(pickUpCircle);
       _circles.add(destinationCircle);
+    });
+  }
+
+  void startGeoFireListener() {
+    Geofire.initialize("driversAvailable");
+    Geofire.queryAtLocation(currentPos.latitude, currentPos.longitude, 20).listen((map) {
+      print(map);
+        if (map != null) {
+          print("TREY");
+          var callBack = map['callBack'];
+
+          //latitude will be retrieved from map['latitude']
+          //longitude will be retrieved from map['longitude']
+
+          switch (callBack) {
+            case Geofire.onKeyEntered:
+              break;
+
+            case Geofire.onKeyExited:
+              break;
+
+            case Geofire.onKeyMoved:
+            // Update your key's location
+              break;
+
+            case Geofire.onGeoQueryReady:
+            // All Intial Data is loaded
+            print(map['result']);
+
+              break;
+          }
+        }
     });
   }
 
