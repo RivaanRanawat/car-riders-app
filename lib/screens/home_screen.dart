@@ -43,6 +43,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Set<Circle> _circles = {};
   DirectionDetails tripDirectionDetails;
   DatabaseReference rideRef;
+  bool nearByDriverKeyLoaded = false;
+  BitmapDescriptor nearByIcon;
 
   bool drawerCanOpen = true;
 
@@ -117,6 +119,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     rideRef.remove();
   }
 
+  void createMarker() {
+    if(nearByIcon == null) {
+      ImageConfiguration imageConfiguration = createLocalImageConfiguration(context, size: Size(2,2));
+      BitmapDescriptor.fromAssetImage(imageConfiguration, "assets/images/car_android.png").then((value){
+        nearByIcon = value;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -125,6 +136,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    createMarker();
     return Scaffold(
       key: scaffoldKey,
       drawer: Container(
@@ -748,10 +760,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
             FireHelper.nearByDriverList.add(nearByDrivers);
 
+            if(nearByDriverKeyLoaded) {
+              updateDriverOnMap();
+            }
+
             break;
 
           case Geofire.onKeyExited:
             FireHelper.removeFromList(map["key"]);
+            updateDriverOnMap();
             break;
 
           case Geofire.onKeyMoved:
@@ -760,14 +777,37 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             nearByDrivers.latitude = map["latitude"];
             nearByDrivers.longitude = map["longitude"];
             FireHelper.updateNearByLocation(nearByDrivers);
+            updateDriverOnMap();
             break;
 
           case Geofire.onGeoQueryReady:
-            print("firehelper length: ${FireHelper.nearByDriverList.length}");
+          nearByDriverKeyLoaded = true;
+            updateDriverOnMap();
 
             break;
         }
       }
+    });
+  }
+
+  void updateDriverOnMap() {
+    setState(() {
+      _markers.clear();
+    });
+
+    Set<Marker> tempMarkers = Set<Marker>();
+    for(NearByDrivers driver in FireHelper.nearByDriverList) {
+      LatLng driverPos = LatLng(driver.latitude, driver.longitude);
+      Marker marker = Marker(
+        markerId: MarkerId("driver${driver.key}"),
+        position: driverPos,
+        icon: nearByIcon,
+        rotation: HelperRepository.generateRandomNumber(360),
+      );
+      tempMarkers.add(marker);
+    }
+    setState(() {
+       _markers = tempMarkers; 
     });
   }
 

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:car_rider_app/dataprovider/appData.dart';
 import 'package:car_rider_app/helpers/requestHelpers.dart';
 import 'package:car_rider_app/models/address.dart';
@@ -92,5 +94,11 @@ class HelperRepository {
 
       }
     });
+  }
+
+  static double generateRandomNumber(int max) {
+    var randomGenerator = Random();
+    int radInt = randomGenerator.nextInt(max);
+    return radInt.toDouble();
   }
 }
