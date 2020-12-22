@@ -22,7 +22,7 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
   double searchSheetHeight = 270;
   double rideSheetHeight = 0;
@@ -35,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
   Set<Polyline> _polylines = {};
   Set<Marker> _markers = {};
   Set<Circle> _circles = {};
+  DirectionDetails tripDirectionDetails;
 
   void setPositionLocator() async {
     Position position = await geoLocator.getCurrentPosition(
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
     zoom: 14.4746,
   );
 
-  void showRideDetailScreen() async{
+  void showRideDetailScreen() async {
     await getDirection();
     setState(() {
       searchSheetHeight = 0;
@@ -63,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
       mapPadding = 240;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -345,6 +347,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
             ),
           ),
 
+          // RIDE DETAILS SCREEN
           Positioned(
             left: 0,
             right: 0,
@@ -392,7 +395,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                                         fontFamily: "Bolt-Semibold"),
                                   ),
                                   Text(
-                                    "14 km",
+                                    (tripDirectionDetails != null)
+                                        ? tripDirectionDetails.distanceText
+                                        : "",
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontFamily: "Bolt-Regular",
@@ -405,7 +410,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                                 child: Container(),
                               ),
                               Text(
-                                "₹250",
+                                (tripDirectionDetails != null)
+                                    ? "₹${HelperRepository.estimateFares(tripDirectionDetails)}"
+                                    : "",
                                 style: TextStyle(
                                     fontSize: 18, fontFamily: "Bolt-Semibold"),
                               ),
@@ -470,6 +477,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
 
     var details = await HelperRepository.getDirectionDetails(
         pickLatLng, destinationLatLng);
+
+    setState(() {
+      tripDirectionDetails = details;
+    });
     Navigator.of(context).pop();
     PolylinePoints polylinePoints = PolylinePoints();
     List<PointLatLng> results =

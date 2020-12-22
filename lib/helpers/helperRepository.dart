@@ -60,4 +60,21 @@ class HelperRepository {
 
     return directionDetails;
   }
+
+  static int estimateFares(DirectionDetails details) {
+    // Calculate fares:
+    // BASE FARE(because rider sat in the vehicle) + DISTANCE FARE(amt for every km)+ TIME FARE(amt for every minute)
+    // we will charge: 
+    // /km = ₹50
+    // /minute = ₹10
+    // base fare = ₹70
+
+    double baseFare = 40;
+    double distanceFare = (details.distanceValue/1000) * 20;
+    double timeFare = (details.durationValue/60) * 5;
+
+    double totalFare = baseFare + distanceFare + timeFare;
+
+    return totalFare.truncate();
+  }
 }
