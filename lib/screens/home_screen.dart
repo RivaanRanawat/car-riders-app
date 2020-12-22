@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:car_rider_app/dataprovider/appData.dart';
+import 'package:car_rider_app/helpers/fireHelper.dart';
 import 'package:car_rider_app/helpers/helperRepository.dart';
 import 'package:car_rider_app/models/directionDetails.dart';
 import 'package:car_rider_app/screens/search_screen.dart';
@@ -18,6 +19,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:provider/provider.dart';
+import "package:car_rider_app/models/nearByDrivers.dart";
 
 class HomeScreen extends StatefulWidget {
   static const String id = "home";
@@ -50,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     currentPos = position;
 
     LatLng pos = LatLng(position.latitude, position.longitude);
-    
+
     String address =
         await HelperRepository.findCordinatesAddress(position, context);
 
@@ -727,33 +729,45 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   void startGeoFireListener() {
     Geofire.initialize("driversAvailable");
-    Geofire.queryAtLocation(currentPos.latitude, currentPos.longitude, 20).listen((map) {
+    Geofire.queryAtLocation(currentPos.latitude, currentPos.longitude, 20)
+        .listen((map) {
       print(map);
-        if (map != null) {
-          print("TREY");
-          var callBack = map['callBack'];
+      if (map != null) {
+        print("TREY");
+        var callBack = map['callBack'];
 
-          //latitude will be retrieved from map['latitude']
-          //longitude will be retrieved from map['longitude']
+        //latitude will be retrieved from map['latitude']
+        //longitude will be retrieved from map['longitude']
 
-          switch (callBack) {
-            case Geofire.onKeyEntered:
-              break;
+        switch (callBack) {
+          case Geofire.onKeyEntered:
+            NearByDrivers nearByDrivers = NearByDrivers();
+            nearByDrivers.key = map["key"];
+            nearByDrivers.latitude = map["latitude"];
+            nearByDrivers.longitude = map["longitude"];
 
-            case Geofire.onKeyExited:
-              break;
+            FireHelper.nearByDriverList.add(nearByDrivers);
 
-            case Geofire.onKeyMoved:
-            // Update your key's location
-              break;
+            break;
 
-            case Geofire.onGeoQueryReady:
-            // All Intial Data is loaded
-            print(map['result']);
+          case Geofire.onKeyExited:
+            FireHelper.removeFromList(map["key"]);
+            break;
 
-              break;
-          }
+          case Geofire.onKeyMoved:
+            NearByDrivers nearByDrivers = NearByDrivers();
+            nearByDrivers.key = map["key"];
+            nearByDrivers.latitude = map["latitude"];
+            nearByDrivers.longitude = map["longitude"];
+            FireHelper.updateNearByLocation(nearByDrivers);
+            break;
+
+          case Geofire.onGeoQueryReady:
+            print("firehelper length: ${FireHelper.nearByDriverList.length}");
+
+            break;
         }
+      }
     });
   }
 
