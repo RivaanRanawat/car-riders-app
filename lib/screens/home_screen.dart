@@ -75,6 +75,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   @override
+  void initState() {
+    super.initState();
+    HelperRepository.getCurrentUserInfo();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
