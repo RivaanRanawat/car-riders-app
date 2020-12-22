@@ -9,6 +9,7 @@ import 'package:car_rider_app/universal_variables.dart';
 import 'package:car_rider_app/widgets/progress_dialog.dart';
 import 'package:car_rider_app/widgets/reusable_button.dart';
 import 'package:car_rider_app/widgets/reusable_divider.dart';
+import 'package:firebase_database/firebase_database.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -38,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Set<Marker> _markers = {};
   Set<Circle> _circles = {};
   DirectionDetails tripDirectionDetails;
+  DatabaseReference rideRef;
 
   bool drawerCanOpen = true;
 
@@ -72,6 +74,42 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       mapPadding = 200;
       drawerCanOpen = true;
     });
+    createRideRequest();
+  }
+
+  void createRideRequest() {
+    rideRef = FirebaseDatabase.instance.reference().child("rideRequest").push();
+    var pickup = Provider.of<AppData>(context, listen: false).pickUpAddress;
+    var destination =
+        Provider.of<AppData>(context, listen: false).destinationAddress;
+
+    Map pickupMap = {
+      "latitude": pickup.lat.toString(),
+      "longitude": pickup.lng.toString()
+    };
+
+    Map destinationMap = {
+      "latitude": destination.lat.toString(),
+      "longitude": destination.lng.toString()
+    };
+
+    Map rideMap = {
+      "created_at": DateTime.now().toString(),
+      "rider_name": currentUserInfo.fullName,
+      "rider_phone": currentUserInfo.phone,
+      "pickup_address": pickup.placeName,
+      "destination_address": destination.placeName,
+      "location": pickupMap,
+      "destination": destinationMap,
+      "payment_method": "cash",
+      "driver_id": "waiting"
+    };
+
+    rideRef.set(rideMap);
+  }
+
+  void cancelRideRequest() {
+    rideRef.remove();
   }
 
   @override
@@ -537,9 +575,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               width: 1.0,
                               color: UniversalVariables.colorLightGrayFair),
                         ),
-                        child: Icon(
-                          Icons.close,
-                          size: 25,
+                        child: GestureDetector(
+                          onTap: () {
+                            cancelRideRequest();
+                            resetApp();
+                          },
+                          child: Icon(
+                            Icons.close,
+                            size: 25,
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -686,6 +730,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       _circles.clear();
       rideSheetHeight = 0;
       searchSheetHeight = 270;
+      requestSheetHeight = 0;
       mapPadding = 280;
       drawerCanOpen = true;
       setPositionLocator();
