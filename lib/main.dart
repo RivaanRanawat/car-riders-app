@@ -2,6 +2,8 @@ import 'package:car_rider_app/dataprovider/appData.dart';
 import 'package:car_rider_app/screens/home_screen.dart';
 import 'package:car_rider_app/screens/login_screen.dart';
 import 'package:car_rider_app/screens/signup_screen.dart';
+import 'package:car_rider_app/universal_variables.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import "dart:io";
@@ -26,6 +28,8 @@ Future<void> main() async {
           ),
   );
 
+  currentFirebaseUser = await FirebaseAuth.instance.currentUser();
+
   runApp(MyApp());
 }
 
@@ -40,7 +44,7 @@ class MyApp extends StatelessWidget {
           fontFamily: "Nunito-Regular",
           primarySwatch: Colors.blue,
         ),
-        initialRoute: HomeScreen.id,
+        initialRoute: (currentFirebaseUser == null)? LoginScreen.id : HomeScreen.id,
         routes: {
           SignUpScreen.id: (context) => SignUpScreen(),
           LoginScreen.id: (context) => LoginScreen(),

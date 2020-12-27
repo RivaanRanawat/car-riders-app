@@ -120,9 +120,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void createMarker() {
-    if(nearByIcon == null) {
-      ImageConfiguration imageConfiguration = createLocalImageConfiguration(context, size: Size(2,2));
-      BitmapDescriptor.fromAssetImage(imageConfiguration, "assets/images/car_android.png").then((value){
+    if (nearByIcon == null) {
+      ImageConfiguration imageConfiguration =
+          createLocalImageConfiguration(context, size: Size(2, 2));
+      BitmapDescriptor.fromAssetImage(
+              imageConfiguration, "assets/images/car_android.png")
+          .then((value) {
         nearByIcon = value;
       });
     }
@@ -760,7 +763,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
             FireHelper.nearByDriverList.add(nearByDrivers);
 
-            if(nearByDriverKeyLoaded) {
+            if (nearByDriverKeyLoaded) {
               updateDriverOnMap();
             }
 
@@ -781,7 +784,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             break;
 
           case Geofire.onGeoQueryReady:
-          nearByDriverKeyLoaded = true;
+            nearByDriverKeyLoaded = true;
             updateDriverOnMap();
 
             break;
@@ -796,7 +799,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     });
 
     Set<Marker> tempMarkers = Set<Marker>();
-    for(NearByDrivers driver in FireHelper.nearByDriverList) {
+    for (NearByDrivers driver in FireHelper.nearByDriverList) {
       LatLng driverPos = LatLng(driver.latitude, driver.longitude);
       Marker marker = Marker(
         markerId: MarkerId("driver${driver.key}"),
@@ -807,7 +810,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       tempMarkers.add(marker);
     }
     setState(() {
-       _markers = tempMarkers; 
+      _markers = tempMarkers;
     });
   }
 
