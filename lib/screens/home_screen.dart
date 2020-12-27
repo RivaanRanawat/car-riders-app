@@ -47,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   bool nearByDriverKeyLoaded = false;
   BitmapDescriptor nearByIcon;
   List<NearByDrivers> availableDrivers;
+  String appState = "NORMAL";
 
   bool drawerCanOpen = true;
 
@@ -119,6 +120,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   void cancelRideRequest() {
     rideRef.remove();
+    setState(() {
+      appState = "NORMAL";
+    });
   }
 
   void createMarker() {
@@ -527,6 +531,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           text: "REQUEST CAB",
                           color: UniversalVariables.colorGreen,
                           onPressed: () {
+                            setState(() {
+                              appState = "REQUESTING";
+                            });
                             showRequestSheet();
                             availableDrivers = FireHelper.nearByDriverList;
                             findDriver();
@@ -863,7 +870,40 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       if(snapshot.value!=null) {
         String token = snapshot.value.toString();
         HelperRepository.sendNotification(token, context, rideRef.key);
+      } else {
+        return;
       }
+
+      const oneSecTick = Duration(seconds: 1);
+      var timer = Timer.periodic(oneSecTick, (timer) {
+        driverReqTimeout --;
+
+        if(appState != "REQUESTING") {
+          driverTripRef.set("cancelled");
+          driverTripRef.onDisconnect();
+          timer.cancel();
+          driverReqTimeout = 30;
+
+        }
+
+        driverTripRef.onValue.listen((event) {
+          if(event.snapshot.value.toString() == "accepted") {
+            driverTripRef.onDisconnect();
+            timer.cancel();
+            driverReqTimeout = 30;
+
+          }
+        });
+
+        if(driverReqTimeout == 0) {
+          driverTripRef.set("timeout");
+          driverTripRef.onDisconnect();
+          driverReqTimeout = 30;
+          timer.cancel();
+
+          findDriver();
+        }
+      });
     });
   }
 }

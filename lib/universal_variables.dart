@@ -39,3 +39,4 @@ User currentUserInfo;
 FirebaseUser currentFirebaseUser;
 String serverKey =
       "key=AAAAEVVTfCY:APA91bG4QWuqFkfhUe0LO7OZpDuxknrAeI1-q_Ye0xJuukVeENpHOTOC48JZvbaN-JOvvO2RssFWJMRN1Xx1rR2n8GdMBG8ZWde1gHuPl0HKYvJrgFfCxf-5aryPIbnkPxn3-f_hM6VZ";
+int driverReqTimeout = 30;
