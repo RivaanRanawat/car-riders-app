@@ -849,7 +849,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
 
     var driver = availableDrivers[0];
+    notifyDriver(driver);
     availableDrivers.removeAt(0);
     print(driver.key);
+  }
+
+  void notifyDriver(NearByDrivers nearByDrivers) {
+    DatabaseReference driverTripRef = FirebaseDatabase.instance.reference().child("drivers/${nearByDrivers.key}/newTrip");
+    driverTripRef.set(rideRef.key);
+
+    DatabaseReference tokenRef = FirebaseDatabase.instance.reference().child("drivers/${nearByDrivers.key}/token");
+    tokenRef.once().then((DataSnapshot snapshot){
+      if(snapshot.value!=null) {
+        String token = snapshot.value.toString();
+        HelperRepository.sendNotification(token, context, rideRef.key);
+      }
+    });
   }
 }

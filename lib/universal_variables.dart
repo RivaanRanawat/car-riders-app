@@ -26,8 +26,6 @@ class UniversalVariables {
   static const Color colorLightGray = Color(0xFFe2e2e2);
   static const Color colorLightGrayFair = Color(0xFFe1e5e8);
   static const Color colorDimText = Color(0xFFadadad);
-
-// API KEYS
   static const String mapKey = "AIzaSyDlN5S_ny58G9dUgtHIcJPt2HdFopOoDyQ";
 
 // VARIABLES
@@ -39,3 +37,5 @@ class UniversalVariables {
 
 User currentUserInfo;
 FirebaseUser currentFirebaseUser;
+String serverKey =
+      "key=AAAAEVVTfCY:APA91bG4QWuqFkfhUe0LO7OZpDuxknrAeI1-q_Ye0xJuukVeENpHOTOC48JZvbaN-JOvvO2RssFWJMRN1Xx1rR2n8GdMBG8ZWde1gHuPl0HKYvJrgFfCxf-5aryPIbnkPxn3-f_hM6VZ";
