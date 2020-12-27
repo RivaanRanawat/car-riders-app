@@ -7,6 +7,7 @@ import 'package:car_rider_app/models/directionDetails.dart';
 import 'package:car_rider_app/screens/search_screen.dart';
 import 'package:car_rider_app/styles.dart';
 import 'package:car_rider_app/universal_variables.dart';
+import 'package:car_rider_app/widgets/NoDriverDialog.dart';
 import 'package:car_rider_app/widgets/progress_dialog.dart';
 import 'package:car_rider_app/widgets/reusable_button.dart';
 import 'package:car_rider_app/widgets/reusable_divider.dart';
@@ -45,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   DatabaseReference rideRef;
   bool nearByDriverKeyLoaded = false;
   BitmapDescriptor nearByIcon;
+  List<NearByDrivers> availableDrivers;
 
   bool drawerCanOpen = true;
 
@@ -526,6 +528,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           color: UniversalVariables.colorGreen,
                           onPressed: () {
                             showRequestSheet();
+                            availableDrivers = FireHelper.nearByDriverList;
+                            findDriver();
                           },
                         ),
                       ),
@@ -827,5 +831,25 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       drawerCanOpen = true;
       setPositionLocator();
     });
+  }
+
+  void noDriverFound() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => NoDriverDialog());
+  }
+
+  void findDriver() {
+    if (availableDrivers.length == 0) {
+      cancelRideRequest();
+      resetApp();
+      noDriverFound();
+      return;
+    }
+
+    var driver = availableDrivers[0];
+    availableDrivers.removeAt(0);
+    print(driver.key);
   }
 }
