@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   double searchSheetHeight = 270;
   double rideSheetHeight = 0;
   double requestSheetHeight = 0;
+  double tripSheetHeight = 0;
   Completer<GoogleMapController> _controller = Completer();
   GoogleMapController mapController;
   double mapPadding = 0.0;
@@ -44,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Set<Circle> _circles = {};
   DirectionDetails tripDirectionDetails;
   DatabaseReference rideRef;
+  StreamSubscription<Event> rideSubscription;
   bool nearByDriverKeyLoaded = false;
   BitmapDescriptor nearByIcon;
   List<NearByDrivers> availableDrivers;
@@ -87,6 +89,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     createRideRequest();
   }
 
+  showTripSheet() {
+    setState(() {
+      requestSheetHeight = 0;
+      tripSheetHeight = 275;
+      mapPadding = 280;
+    });
+  }
+
   void createRideRequest() {
     rideRef = FirebaseDatabase.instance.reference().child("rideRequest").push();
     var pickup = Provider.of<AppData>(context, listen: false).pickUpAddress;
@@ -116,6 +126,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     };
 
     rideRef.set(rideMap);
+    rideSubscription = rideRef.onValue.listen((event) {
+      if(event.snapshot.value == null) {
+        return;
+      }
+      if(event.snapshot.value["status"] != null) {
+        status = event.snapshot.value["status"].toString();
+      }
+
+      if(status == "accepted") {
+        showTripSheet();
+      }
+    });
   }
 
   void cancelRideRequest() {
@@ -634,6 +656,126 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
             ),
           ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: AnimatedSize(
+              vsync: this,
+              duration: new Duration(milliseconds: 150),
+              curve: Curves.easeIn,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 15,
+                      spreadRadius: 0.5,
+                      offset: Offset(0.7, 0.7),
+                    ),
+                  ],
+                ),
+                height: tripSheetHeight,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0, vertical: 18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Driver is Arriving",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 18, fontFamily: "Bolt-Semibold")),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      ReusableDivider(),
+                      SizedBox(height: 20),
+                      Text(
+                        "Car Name",
+                        style:
+                            TextStyle(color: UniversalVariables.colorTextLight),
+                      ),
+                      Text("Driver Name", style: TextStyle(fontSize: 20)),
+                      SizedBox(height: 20),
+                      ReusableDivider(),
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(25),
+                                  ),
+                                  border: Border.all(width: 1.0, color: UniversalVariables.colorTextLight),
+                                ),
+                                child: Icon(Icons.call),
+                              ),
+                              SizedBox(height: 10),
+                              Text("Call")
+                            ],
+                          ),
+
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(25),
+                                  ),
+                                  border: Border.all(width: 1.0, color: UniversalVariables.colorTextLight),
+                                ),
+                                child: Icon(Icons.list),
+                              ),
+                              SizedBox(height: 10),
+                              Text("Details")
+                            ],
+                          ),
+
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(25),
+                                  ),
+                                  border: Border.all(width: 1.0, color: UniversalVariables.colorTextLight),
+                                ),
+                                child: Icon(Icons.clear),
+                              ),
+                              SizedBox(height: 10),
+                              Text("Cancel")
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -862,12 +1004,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void notifyDriver(NearByDrivers nearByDrivers) {
-    DatabaseReference driverTripRef = FirebaseDatabase.instance.reference().child("drivers/${nearByDrivers.key}/newTrip");
+    DatabaseReference driverTripRef = FirebaseDatabase.instance
+        .reference()
+        .child("drivers/${nearByDrivers.key}/newTrip");
     driverTripRef.set(rideRef.key);
 
-    DatabaseReference tokenRef = FirebaseDatabase.instance.reference().child("drivers/${nearByDrivers.key}/token");
-    tokenRef.once().then((DataSnapshot snapshot){
-      if(snapshot.value!=null) {
+    DatabaseReference tokenRef = FirebaseDatabase.instance
+        .reference()
+        .child("drivers/${nearByDrivers.key}/token");
+    tokenRef.once().then((DataSnapshot snapshot) {
+      if (snapshot.value != null) {
         String token = snapshot.value.toString();
         HelperRepository.sendNotification(token, context, rideRef.key);
       } else {
@@ -876,26 +1022,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
       const oneSecTick = Duration(seconds: 1);
       var timer = Timer.periodic(oneSecTick, (timer) {
-        driverReqTimeout --;
+        driverReqTimeout--;
 
-        if(appState != "REQUESTING") {
+        if (appState != "REQUESTING") {
           driverTripRef.set("cancelled");
           driverTripRef.onDisconnect();
           timer.cancel();
           driverReqTimeout = 30;
-
         }
 
         driverTripRef.onValue.listen((event) {
-          if(event.snapshot.value.toString() == "accepted") {
+          if (event.snapshot.value.toString() == "accepted") {
             driverTripRef.onDisconnect();
             timer.cancel();
             driverReqTimeout = 30;
-
           }
         });
 
-        if(driverReqTimeout == 0) {
+        if (driverReqTimeout == 0) {
           driverTripRef.set("timeout");
           driverTripRef.onDisconnect();
           driverReqTimeout = 30;
