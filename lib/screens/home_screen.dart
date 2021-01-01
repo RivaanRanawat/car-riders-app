@@ -160,7 +160,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
         if(status == "accepted") {
           updateToPickUp(driverLocation);
+        } else if(status == "onTrip") {
+          updateToDestination(driverLocation);
+        } else if(status == "arrived") {
+          tripStatusDisplay = "Driver has arrived";
         }
+
+        print(tripStatusDisplay);
       }
 
       if (event.snapshot.value["status"] != null) {
@@ -187,6 +193,27 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
       setState(() {
         tripStatusDisplay = "Driver is arriving in ${thisDetails.durationText}";
+      });
+      isRequestingLocationDetails = false;
+    }
+  }
+
+  void updateToDestination(LatLng driverLocation) async {
+    if (!isRequestingLocationDetails) {
+      isRequestingLocationDetails = true;
+      var destination = Provider.of<AppData>(context, listen: false).destinationAddress;
+
+      var destinationLatLng = LatLng(destination.lat, destination.lng);
+
+      var thisDetails = await HelperRepository.getDirectionDetails(
+          driverLocation, destinationLatLng);
+
+      if (thisDetails == null) {
+        return;
+      }
+
+      setState(() {
+        tripStatusDisplay = "Driving to destination - ${thisDetails.durationText}";
       });
       isRequestingLocationDetails = false;
     }
