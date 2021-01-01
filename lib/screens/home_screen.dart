@@ -175,7 +175,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
       if (status == "accepted") {
         showTripSheet();
+        Geofire.stopListener();
+        removeGeoFireMarkers();
       }
+    });
+  }
+
+  void removeGeoFireMarkers() {
+    setState(() {
+      _markers.removeWhere((m) => m.markerId.value.contains("driver"));
     });
   }
 
