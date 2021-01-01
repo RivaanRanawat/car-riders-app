@@ -52,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String appState = "NORMAL";
 
   bool drawerCanOpen = true;
+  bool isRequestingLocationDetails = false;
 
   void setPositionLocator() async {
     Position position = await geoLocator.getCurrentPosition(
@@ -149,6 +150,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         });
       }
 
+      if (event.snapshot.value["driver_location"] != null) {
+        double driverLat = double.parse(
+            event.snapshot.value["driver_location"]["latitude"].toString());
+        double driverLng = double.parse(
+            event.snapshot.value["driver_location"]["longitude"].toString());
+
+        LatLng driverLocation = LatLng(driverLat, driverLng);
+
+        if(status == "accepted") {
+          updateToPickUp(driverLocation);
+        }
+      }
+
       if (event.snapshot.value["status"] != null) {
         status = event.snapshot.value["status"].toString();
       }
@@ -157,6 +171,25 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         showTripSheet();
       }
     });
+  }
+
+  void updateToPickUp(LatLng driverLocation) async {
+    if (!isRequestingLocationDetails) {
+      isRequestingLocationDetails = true;
+      var positionLatLng = LatLng(currentPos.latitude, currentPos.longitude);
+
+      var thisDetails = await HelperRepository.getDirectionDetails(
+          driverLocation, positionLatLng);
+
+      if (thisDetails == null) {
+        return;
+      }
+
+      setState(() {
+        tripStatusDisplay = "Driver is arriving in ${thisDetails.durationText}";
+      });
+      isRequestingLocationDetails = false;
+    }
   }
 
   void cancelRideRequest() {
