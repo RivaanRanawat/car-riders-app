@@ -127,14 +127,33 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     rideRef.set(rideMap);
     rideSubscription = rideRef.onValue.listen((event) {
-      if(event.snapshot.value == null) {
+      if (event.snapshot.value == null) {
         return;
       }
-      if(event.snapshot.value["status"] != null) {
+
+      if (event.snapshot.value["car_details"] != null) {
+        setState(() {
+          carDriverDetails = event.snapshot.value["car_details"].toString();
+        });
+      }
+
+      if (event.snapshot.value["driver_name"] != null) {
+        setState(() {
+          driverFullName = event.snapshot.value["driver_name"].toString();
+        });
+      }
+
+      if (event.snapshot.value["driver_phone"] != null) {
+        setState(() {
+          driverPhoneNumber = event.snapshot.value["driver_phone"].toString();
+        });
+      }
+
+      if (event.snapshot.value["status"] != null) {
         status = event.snapshot.value["status"].toString();
       }
 
-      if(status == "accepted") {
+      if (status == "accepted") {
         showTripSheet();
       }
     });
@@ -691,7 +710,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Driver is Arriving",
+                          Text(tripStatusDisplay,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 18, fontFamily: "Bolt-Semibold")),
@@ -701,11 +720,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       ReusableDivider(),
                       SizedBox(height: 20),
                       Text(
-                        "Car Name",
+                        carDriverDetails,
                         style:
                             TextStyle(color: UniversalVariables.colorTextLight),
                       ),
-                      Text("Driver Name", style: TextStyle(fontSize: 20)),
+                      Text(driverFullName, style: TextStyle(fontSize: 20)),
                       SizedBox(height: 20),
                       ReusableDivider(),
                       SizedBox(height: 20),
@@ -722,7 +741,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(25),
                                   ),
-                                  border: Border.all(width: 1.0, color: UniversalVariables.colorTextLight),
+                                  border: Border.all(
+                                      width: 1.0,
+                                      color: UniversalVariables.colorTextLight),
                                 ),
                                 child: Icon(Icons.call),
                               ),
@@ -730,7 +751,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               Text("Call")
                             ],
                           ),
-
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -741,7 +761,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(25),
                                   ),
-                                  border: Border.all(width: 1.0, color: UniversalVariables.colorTextLight),
+                                  border: Border.all(
+                                      width: 1.0,
+                                      color: UniversalVariables.colorTextLight),
                                 ),
                                 child: Icon(Icons.list),
                               ),
@@ -749,7 +771,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               Text("Details")
                             ],
                           ),
-
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -760,7 +781,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(25),
                                   ),
-                                  border: Border.all(width: 1.0, color: UniversalVariables.colorTextLight),
+                                  border: Border.all(
+                                      width: 1.0,
+                                      color: UniversalVariables.colorTextLight),
                                 ),
                                 child: Icon(Icons.clear),
                               ),
